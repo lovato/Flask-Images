@@ -195,15 +195,16 @@ class Images(object):
 
     def handle_request(self, path):
 
-        # Verify the signature.
         query = dict(request.args.iteritems())
-        old_sig = str(query.pop('s', None))
-        if not old_sig:
-            abort(404)
-        signer = Signer(current_app.secret_key)
-        new_sig = signer.get_signature('%s?%s' % (path, urlencode(sorted(query.iteritems()), True)))
-        if not constant_time_compare(old_sig, new_sig):
-            abort(404)
+        if current_app.secret_key:
+            # Verify the signature.
+            old_sig = str(query.pop('s', None))
+            if not old_sig:
+                abort(404)
+            signer = Signer(current_app.secret_key)
+            new_sig = signer.get_signature('%s?%s' % (path, urlencode(sorted(query.iteritems()), True)))
+            if not constant_time_compare(old_sig, new_sig):
+                abort(404)
         
         remote_url = query.get('u')
         if remote_url:
