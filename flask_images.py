@@ -196,7 +196,7 @@ class Images(object):
     def handle_request(self, path):
 
         query = dict(request.args.iteritems())
-        if current_app.secret_key:
+        if current_app.secret_key != 'nokey' :
             # Verify the signature.
             old_sig = str(query.pop('s', None))
             if not old_sig:
